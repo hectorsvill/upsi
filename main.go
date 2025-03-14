@@ -26,6 +26,7 @@ func init() {
 func main() {
 	var wg sync.WaitGroup
 	urls := strings.Split(urlsStr, ",")
+	results := make(chan string, len(urls))
 	for _, url := range urls {
 		wg.Add(1)
 		client := &http.Client{
@@ -37,10 +38,14 @@ func main() {
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Printf("%v - %v\n", url, stat)
+			results <- fmt.Sprintf("%v - %v", url, stat)
 		}(url)
 	}
 	wg.Wait()
+	close(results)
+	for res := range results {
+		fmt.Println(res)
+	}
 }
 
 func statusCheck(site string, client *http.Client) (string, error) {
