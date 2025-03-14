@@ -2,22 +2,29 @@ package main
 
 import (
 	// "errors"
+	"flag"
 	"fmt"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 )
 
+var (
+	urlsStr string
+)
+
+func init() {
+	flag.StringVar(&urlsStr, "s", "", "list of urls separeted by commas")
+	flag.Usage = func() {
+		fmt.Printf("Ussage:%v -s <comma sepperated urls>", "upsi")
+	}
+	flag.Parse()
+}
+
 func main() {
 	var wg sync.WaitGroup
-	urls := []string{
-		// "http://www.google.com",
-		"https://time.is/",
-		"http://www.youtube.com",
-		"http://www.google.co.kr",
-		// "http://www.alipay.com",
-	}
-
+	urls := strings.Split(urlsStr, ",")
 	for _, url := range urls {
 		wg.Add(1)
 		client := &http.Client{
