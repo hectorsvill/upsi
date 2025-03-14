@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -17,7 +18,7 @@ var (
 func init() {
 	flag.StringVar(&urlsStr, "s", "", "list of urls separeted by commas")
 	flag.Usage = func() {
-		fmt.Printf("Ussage:%v -s <comma sepperated urls>", "upsi")
+		fmt.Printf("Ussage:%v -s <comma sepperated urls>\n", os.Args[0])
 	}
 	flag.Parse()
 }
