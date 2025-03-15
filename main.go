@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "errors"
 	"flag"
 	"fmt"
 	"net/http"
@@ -23,8 +22,8 @@ var (
 )
 
 func init() {
-	flag.StringVar(&urlsStr, "s", "", "list of urls separeted by commas")
-	// flag.StringVar(&fileLoc, "f", "", "file")
+	flag.StringVar(&urlsStr, "s", "", "list of urls separated by commas")
+	flag.StringVar(&fileLoc, "f", "", "file with list of urls separated by new line")
 	flag.Usage = func() {
 		printUsage()
 	}
@@ -33,16 +32,42 @@ func init() {
 
 func main() {
 	if len(os.Args) == 3 {
-		upsi()
+		if os.Args[1] == "-s" {
+			urls := strings.Split(urlsStr, ",")
+			upsi(urls)
+		} else if os.Args[1] == "-f" {
+			urls, err := getUrlsFromFile()
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			upsi(urls)
+		}
 	} else {
 		printUsage()
 	}
 }
 
-func upsi() {
+func getUrlsFromFile() ([]string, error) {
+	data, err := os.ReadFile(fileLoc)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	urlsStr := string(data)
+	var urls []string
+	for _, url := range strings.Split(urlsStr, "\n") {
+		if url != "" {
+			urls = append(urls, url)
+		}
+	}
+	return urls, nil
+}
+
+func upsi(urls []string) {
 	var wg sync.WaitGroup
-	urls := strings.Split(urlsStr, ",")
 	results := make(chan Result, len(urls))
+
 	for _, url := range urls {
 		wg.Add(1)
 		client := &http.Client{
@@ -59,7 +84,6 @@ func upsi() {
 				status: stat,
 				print:  fmt.Sprintf("URL: %-42v | Status: %v", url, stat),
 			}
-
 			results <- res
 		}(url)
 	}
@@ -68,11 +92,13 @@ func upsi() {
 	for res := range results {
 		fmt.Println(res.print)
 	}
-
 }
 
 func printUsage() {
-	fmt.Printf("Ussage:\n%v -s \"list of urls separeted by commas\"\n", os.Args[0])
+	fmt.Println("Usage:")
+	fmt.Printf("%v -s \"list of urls separated by commas\"\n", os.Args[0])
+	fmt.Printf("%v -f \"file location:list of urls separated by new line\n", os.Args[0])
+
 }
 
 func statusCheck(site string, client *http.Client) (string, error) {
