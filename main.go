@@ -18,12 +18,21 @@ var (
 func init() {
 	flag.StringVar(&urlsStr, "s", "", "list of urls separeted by commas")
 	flag.Usage = func() {
-		fmt.Printf("Ussage:%v -s <comma sepperated urls>\n", os.Args[0])
+		printUsage()
 	}
 	flag.Parse()
 }
 
 func main() {
+	if len(os.Args) == 2 {
+		upsi()
+	} else {
+		printUsage()
+	}
+
+}
+
+func upsi() {
 	var wg sync.WaitGroup
 	urls := strings.Split(urlsStr, ",")
 	results := make(chan string, len(urls))
@@ -46,6 +55,11 @@ func main() {
 	for res := range results {
 		fmt.Println(res)
 	}
+
+}
+
+func printUsage() {
+	fmt.Printf("Ussage:\n%v -s \"list of urls separeted by commas\"\n", os.Args[0])
 }
 
 func statusCheck(site string, client *http.Client) (string, error) {
