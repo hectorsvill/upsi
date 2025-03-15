@@ -1,4 +1,4 @@
-# upsi - Multi URL status checker 
+# upsi - concurrent URL status checker
 ```shell
 ➜  upsi git:(main) ✗ ./upsi
 Usage:
