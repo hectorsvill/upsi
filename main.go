@@ -95,10 +95,9 @@ func upsi(urls []string) {
 }
 
 func printUsage() {
-	fmt.Println("Usage:")
-	fmt.Printf("%v -s \"list of urls separated by commas\"\n", os.Args[0])
-	fmt.Printf("%v -f \"file location:list of urls separated by new line\n", os.Args[0])
-
+	s := fmt.Sprintf("%v -s \"list of urls separated by commas\"\n", os.Args[0])
+	f := fmt.Sprintf("%v -f \"file location:list of urls separated by new line\"\n", os.Args[0])
+	fmt.Printf("Usage: \n%v%v", s, f)
 }
 
 func statusCheck(site string, client *http.Client) (string, error) {
