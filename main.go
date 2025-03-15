@@ -24,7 +24,7 @@ var (
 
 func init() {
 	flag.StringVar(&urlsStr, "s", "", "list of urls separeted by commas")
-	flag.StringVar(&fileLoc, "f", "", "file")
+	// flag.StringVar(&fileLoc, "f", "", "file")
 	flag.Usage = func() {
 		printUsage()
 	}
