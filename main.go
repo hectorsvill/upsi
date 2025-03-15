@@ -11,6 +11,12 @@ import (
 	"time"
 )
 
+type Result struct {
+	url    string
+	status string
+	print  string
+}
+
 var (
 	urlsStr string
 )
@@ -24,7 +30,7 @@ func init() {
 }
 
 func main() {
-	if len(os.Args) == 2 {
+	if len(os.Args) == 3 {
 		upsi()
 	} else {
 		printUsage()
@@ -35,7 +41,7 @@ func main() {
 func upsi() {
 	var wg sync.WaitGroup
 	urls := strings.Split(urlsStr, ",")
-	results := make(chan string, len(urls))
+	results := make(chan Result, len(urls))
 	for _, url := range urls {
 		wg.Add(1)
 		client := &http.Client{
@@ -47,13 +53,19 @@ func upsi() {
 			if err != nil {
 				fmt.Println(err)
 			}
-			results <- fmt.Sprintf("%v - %v", url, stat)
+			res := Result{
+				url:    url,
+				status: stat,
+				print:  fmt.Sprintf("%v - %v", url, stat),
+			}
+
+			results <- res
 		}(url)
 	}
 	wg.Wait()
 	close(results)
 	for res := range results {
-		fmt.Println(res)
+		fmt.Println(res.print)
 	}
 
 }
