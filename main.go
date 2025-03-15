@@ -19,10 +19,12 @@ type Result struct {
 
 var (
 	urlsStr string
+	fileLoc string
 )
 
 func init() {
 	flag.StringVar(&urlsStr, "s", "", "list of urls separeted by commas")
+	flag.StringVar(&fileLoc, "f", "", "file")
 	flag.Usage = func() {
 		printUsage()
 	}
@@ -35,7 +37,6 @@ func main() {
 	} else {
 		printUsage()
 	}
-
 }
 
 func upsi() {
@@ -56,7 +57,7 @@ func upsi() {
 			res := Result{
 				url:    url,
 				status: stat,
-				print:  fmt.Sprintf("%v - %v", url, stat),
+				print:  fmt.Sprintf("URL: %-42v | Status: %v", url, stat),
 			}
 
 			results <- res
